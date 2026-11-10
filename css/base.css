@@ -1,0 +1,141 @@
+/* ============================================================
+   BASE — variabili, font, regole generali.
+   Tutti i colori e le misure dell'app stanno qui, in "variabili CSS"
+   (--nome). Per cambiare l'accento o un grigio basta toccare una riga.
+   ============================================================ */
+
+/* Font inclusi nel progetto: funzionano anche offline.
+   Sono "variabili": un solo file contiene tutti i pesi (sottile, normale, ...). */
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("../fonts/CormorantGaramond.ttf") format("truetype");
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+:root {
+  /* Superfici: tre livelli di nero, dal fondo alle card */
+  --fondo: #09090a;
+  --superficie: #101012;
+  --rialzo: #17171a;
+  --linea: #232327;
+  --linea-forte: #34343a;
+
+  /* Testo */
+  --testo: #ebe8e1;
+  --testo-2: #8d8b86;
+  --testo-3: #5a5956;
+
+  /* Accento: ottone (predefinito). L'alternativa "acciaio" è più sotto. */
+  --accento: #b09a66;
+  --accento-tenue: rgba(176, 154, 102, 0.14);
+
+  /* Stati */
+  --fatto: #7f9a86;
+  --saltato: #9a6f6a;
+
+  /* Tipografia */
+  --font-ui: "Inter", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  --font-titoli: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --peso-titoli: 500;
+
+  /* Misure */
+  --raggio: 6px;
+  --raggio-piccolo: 4px;
+  --tocco: 48px;            /* altezza minima delle aree toccabili */
+  --rapida: 160ms;
+  --morbida: 240ms;
+  --curva: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Accento alternativo: si attiva scrivendo <html data-accento="acciaio"> */
+:root[data-accento="acciaio"] {
+  --accento: #93a6b6;
+  --accento-tenue: rgba(147, 166, 182, 0.14);
+}
+
+/* Titoli alternativi: sans molto sottile al posto del serif */
+:root[data-titoli="sans"] {
+  --font-titoli: "Inter", system-ui, sans-serif;
+  --peso-titoli: 200;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  background: var(--fondo);
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--testo);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.45;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+h1, h2, h3, p { margin: 0; }
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Numeri "tabulari": ogni cifra occupa la stessa larghezza,
+   così orari e statistiche restano incolonnati. */
+.numeri, .titolo.numeri { font-variant-numeric: tabular-nums lining-nums; }
+
+.titolo {
+  font-family: var(--font-titoli);
+  font-weight: var(--peso-titoli);
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  /* cifre "allineate" (tutte alte uguali): il serif di default le disegna in stile antico */
+  font-variant-numeric: lining-nums;
+}
+
+/* Etichette piccole in maiuscoletto spaziato */
+.etichetta {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--testo-2);
+}
+
+.secondario { color: var(--testo-2); }
+
+/* Contorno visibile solo quando si naviga da tastiera */
+:focus-visible {
+  outline: 1px solid var(--accento);
+  outline-offset: 2px;
+}
+
+/* Chi ha chiesto al telefono di ridurre le animazioni non ne vede */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

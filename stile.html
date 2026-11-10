@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="it" data-accento="ottone" data-titoli="serif">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agenda — prova dello stile</title>
+  <meta name="theme-color" content="#09090a">
+  <link rel="icon" type="image/png" href="icone/icona-192.png">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/componenti.css">
+  <style>
+    /* Regole che servono solo a questa pagina di prova */
+    .prova { max-width: 560px; margin: 0 auto; padding: 28px 20px 60px; }
+    .prova section { margin-top: 38px; }
+    .prova section > .etichetta { display: block; margin-bottom: 12px; }
+    .intestazione .titolo { font-size: 40px; margin-top: 6px; }
+    .campioni { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .campione { height: 54px; border: 1px solid var(--linea); border-radius: var(--raggio-piccolo); }
+    .campioni p { font-size: 11px; color: var(--testo-2); margin-top: 6px; }
+    .fila { display: flex; gap: 10px; flex-wrap: wrap; }
+    .esempio-timeline { position: relative; height: 200px; margin-right: 0; }
+    .scelte { position: sticky; top: 0; z-index: 5; background: var(--fondo); padding: 12px 0; display: grid; gap: 8px; border-bottom: 1px solid var(--linea); }
+  </style>
+</head>
+<body>
+  <div class="prova">
+
+    <header class="intestazione">
+      <span class="etichetta">Prova dello stile</span>
+      <h1 class="titolo">Martedì 10 novembre</h1>
+      <p class="nota">Usa i due selettori qui sotto per confrontare le combinazioni. Tutta la pagina cambia insieme.</p>
+    </header>
+
+    <div class="scelte">
+      <div class="segmenti" id="scelta-accento">
+        <button data-valore="ottone" class="scelto">Ottone</button>
+        <button data-valore="acciaio">Acciaio</button>
+      </div>
+      <div class="segmenti" id="scelta-titoli">
+        <button data-valore="serif" class="scelto">Titoli serif</button>
+        <button data-valore="sans">Titoli sans sottile</button>
+      </div>
+    </div>
+
+    <section>
+      <span class="etichetta">Obiettivo del giorno</span>
+      <div class="card">
+        <span class="etichetta">Studio</span>
+        <div class="obiettivo-valori">
+          <span class="titolo numeri">1h50</span>
+          <span class="secondario numeri">di 2h45</span>
+        </div>
+        <div class="barra-obiettivo"><i id="riempimento"></i></div>
+      </div>
+    </section>
+
+    <section>
+      <span class="etichetta">Superfici e testo</span>
+      <div class="campioni">
+        <div><div class="campione" style="background:var(--fondo)"></div><p>Fondo</p></div>
+        <div><div class="campione" style="background:var(--superficie)"></div><p>Superficie</p></div>
+        <div><div class="campione" style="background:var(--rialzo)"></div><p>Rialzo</p></div>
+        <div><div class="campione" style="background:var(--accento)"></div><p>Accento</p></div>
+      </div>
+      <p style="margin-top:16px">Testo principale, bianco sporco.</p>
+      <p class="secondario">Testo secondario, grigio.</p>
+      <p class="numeri" style="margin-top:8px">08:30 – 10:30 · 2h00 · 27,4</p>
+    </section>
+
+    <section>
+      <span class="etichetta">Materie</span>
+      <div class="materie">
+        <button style="--colore:#8c93a8" class="scelto">Matematica 1</button>
+        <button style="--colore:#8fa394">Informatica 1</button>
+        <button style="--colore:#a3927f">Algebra lineare</button>
+        <button style="--colore:#9c8798">Mat. computazionale</button>
+      </div>
+    </section>
+
+    <section>
+      <span class="etichetta">Blocchi sulla timeline</span>
+      <div class="timeline esempio-timeline">
+        <div class="ora" style="top:0"><span class="numeri">15:00</span></div>
+        <div class="ora" style="top:66px"><span class="numeri">16:00</span></div>
+        <div class="ora" style="top:132px"><span class="numeri">17:00</span></div>
+        <div class="ora" style="top:198px"><span class="numeri">18:00</span></div>
+        <div class="area-blocchi">
+          <div class="blocco fatto" style="top:0;height:64px;left:0;width:calc(100% - 3px);--colore:#8c93a8">
+            <span class="blocco-titolo">Matematica 1</span>
+            <span class="blocco-orario numeri">15:00 – 16:00</span>
+          </div>
+          <div class="blocco" style="top:82px;height:97px;left:0;width:calc(100% - 3px);--colore:#8fa394">
+            <span class="blocco-titolo">Informatica 1</span>
+            <span class="blocco-orario numeri">16:15 – 17:45</span>
+          </div>
+        </div>
+        <div class="adesso" style="top:104px"></div>
+      </div>
+    </section>
+
+    <section>
+      <span class="etichetta">Pulsanti</span>
+      <div class="fila">
+        <button class="pulsante principale">Avvia focus</button>
+        <button class="pulsante">Pianifica</button>
+        <button class="pulsante discreto">Annulla</button>
+      </div>
+    </section>
+
+    <section>
+      <span class="etichetta">Campi</span>
+      <div class="due-colonne">
+        <label class="campo"><span class="etichetta">Inizio</span><input type="time" value="15:00"></label>
+        <label class="campo"><span class="etichetta">Fine</span><input type="time" value="17:00"></label>
+      </div>
+      <div class="segmenti">
+        <button class="scelto">Pianificato</button><button>Fatto</button><button>Saltato</button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Cambia accento o carattere dei titoli scrivendo un attributo su <html>:
+    // il CSS reagisce da solo grazie alle variabili definite in base.css.
+    function collega(id, attributo) {
+      const gruppo = document.getElementById(id);
+      gruppo.addEventListener("click", (evento) => {
+        const pulsante = evento.target.closest("button");
+        if (!pulsante) return;
+        for (const altro of gruppo.querySelectorAll("button")) altro.classList.toggle("scelto", altro === pulsante);
+        document.documentElement.dataset[attributo] = pulsante.dataset.valore;
+      });
+    }
+    collega("scelta-accento", "accento");
+    collega("scelta-titoli", "titoli");
+
+    // La barra si riempie con morbidezza all'apertura
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { document.getElementById("riempimento").style.width = "67%"; });
+    });
+  </script>
+</body>
+</html>
