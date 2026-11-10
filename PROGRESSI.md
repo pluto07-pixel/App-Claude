@@ -29,7 +29,7 @@ Cosa funziona:
 - Telefono di riferimento: iPhone 14.
 - Font: Inter e Cormorant Garamond, ridotti ai caratteri latini (`fonts/`).
 - Focus anticipato rispetto all'ordine delle fasi (richiesta di Davide). Il tempo si calcola dagli istanti salvati, non contando i secondi, perché iPhone sospende i timer in secondo piano.
-- Non disturbare passa da Comandi Rapidi (`shortcuts://run-shortcut`): il comando riceve i minuti rimanenti oppure "off". Alla fine prevista non serve nulla, iPhone lo spegne da solo.
+- Non disturbare passa da Comandi Rapidi (`shortcuts://run-shortcut`): il comando riceve i minuti rimanenti per attivare, nessun input per disattivare. Alla fine prevista non serve nulla, iPhone lo spegne da solo.
 - Il blocco schermo è indistinguibile dall'uscita dall'app: per questo al rientro c'è "Conta come studio".
 
 ## Da decidere

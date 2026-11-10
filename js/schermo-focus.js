@@ -5,9 +5,9 @@
 // NON DISTURBARE: una pagina web non può accendere le modalità di
 // iPhone. Può però aprire un indirizzo speciale, shortcuts://..., che
 // fa eseguire un comando dell'app Comandi Rapidi. Il comando (che si
-// crea una volta sola sul telefono, vedi TUTORIAL.md) riceve un testo:
-//   - un numero  -> attiva Non disturbare per quel numero di minuti;
-//   - "off"      -> lo disattiva.
+// crea una volta sola sul telefono, vedi TUTORIAL.md) funziona così:
+//   - riceve un numero  -> attiva Non disturbare per quel numero di minuti;
+//   - non riceve nulla  -> lo disattiva.
 // Se il focus arriva alla fine prevista non serve fare nulla: iPhone
 // spegne Non disturbare da solo all'orario indicato.
 // ============================================================
@@ -41,8 +41,10 @@ export function preparaFocus(contesto) {
 // Attenzione: questo porta in primo piano Comandi Rapidi, poi si torna all'agenda a mano.
 export function lanciaComando(testo) {
   ultimoLancio = Date.now();
-  const indirizzo = "shortcuts://run-shortcut"
-    + `?name=${encodeURIComponent(NOME_COMANDO)}&input=text&text=${encodeURIComponent(testo)}`;
+  let indirizzo = `shortcuts://run-shortcut?name=${encodeURIComponent(NOME_COMANDO)}`;
+  // Con un numero passo l'input; per "off" non passo nulla: il comando distingue
+  // i due casi guardando soltanto se ha ricevuto un input oppure no.
+  if (testo !== "off") indirizzo += `&input=text&text=${encodeURIComponent(testo)}`;
   window.location.href = indirizzo;
 }
 

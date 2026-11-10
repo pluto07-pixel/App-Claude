@@ -12,7 +12,7 @@
 // Se cambio l'elenco dei file, aumento il numero in VERSIONE.
 // ============================================================
 
-const VERSIONE = "agenda-2";
+const VERSIONE = "agenda-3";
 
 const FILE = [
   "./",
