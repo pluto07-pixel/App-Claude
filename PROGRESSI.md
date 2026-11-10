@@ -4,7 +4,7 @@ Agenda personale con obiettivo di studio adattivo. Questo file serve a riprender
 
 ## Stato attuale
 
-**Fase 1 completata** (10 novembre 2026). L'app si apre, mostra la giornata, salva i dati, funziona offline e si può installare.
+**Fasi 1 e 5 completate** (10 novembre 2026). L'app mostra la giornata, salva i dati, funziona offline, si può installare e ha la modalità focus.
 
 Cosa funziona:
 - vista giornata: timeline verticale, linea dell'ora attuale, striscia della settimana, frecce giorno prima/dopo, pulsante Oggi;
@@ -13,7 +13,9 @@ Cosa funziona:
 - sovrapposizioni permesse: i blocchi si affiancano e compare un avviso;
 - backup: esporta (pannello Condividi su iPhone) e importa JSON, con conferma;
 - PWA: manifest, icone, service worker, font inclusi;
-- aspetto: accento (ottone/acciaio) e titoli (serif/sans sottile) si cambiano da "Altro".
+- aspetto: accento (ottone/acciaio) e titoli (serif/sans sottile) si cambiano da "Altro";
+- focus: timer a schermo intero avviato da un blocco di studio, libero o a cicli, studio effettivo registrato in `stato.sessioni`, uscite dall'app registrate (non contate, salvo scelta), schermo tenuto acceso;
+- Non disturbare: all'avvio e alla chiusura anticipata l'app lancia il comando rapido "Agenda Focus" (istruzioni in `TUTORIAL.md`).
 
 ## Decisioni prese
 
@@ -26,12 +28,16 @@ Cosa funziona:
 - Si costruiscono tutte e 12 le funzionalità (richiesta di Davide), una fase per sessione.
 - Telefono di riferimento: iPhone 14.
 - Font: Inter e Cormorant Garamond, ridotti ai caratteri latini (`fonts/`).
+- Focus anticipato rispetto all'ordine delle fasi (richiesta di Davide). Il tempo si calcola dagli istanti salvati, non contando i secondi, perché iPhone sospende i timer in secondo piano.
+- Non disturbare passa da Comandi Rapidi (`shortcuts://run-shortcut`): il comando riceve i minuti rimanenti oppure "off". Alla fine prevista non serve nulla, iPhone lo spegne da solo.
+- Il blocco schermo è indistinguibile dall'uscita dall'app: per questo al rientro c'è "Conta come studio".
 
 ## Da decidere
 
 - Accento e titoli definitivi (per ora ottone + serif; si provano dall'app o da `stile.html`).
 - Fase 4: il recupero può far superare il massimo di 6 ore?
 - Fase 10: notifiche su iPhone (senza server non sono affidabili).
+- Da verificare su iPhone vero: trascinamento, pannello Condividi, lancio del comando rapido dall'app installata.
 
 ## Struttura
 
@@ -48,9 +54,13 @@ js/date.js            giorni e orari
 js/archivio.js        localStorage e backup
 js/giornata.js        disegno della timeline
 js/trascina.js        pressione lunga e trascinamento
+js/focus.js           calcoli del focus (funzioni pure)
+js/schermo-focus.js   timer a schermo intero, uscite, Non disturbare
 js/foglio.js          pannello dal basso e messaggi
 js/modulo-blocco.js   modulo nuovo/modifica blocco
 js/impostazioni.js    foglio "Altro"
+test/focus.test.mjs   prove del focus: node test/focus.test.mjs
+TUTORIAL.md           installazione su iPhone e comando rapido
 ```
 
 ## Fasi
@@ -59,7 +69,7 @@ js/impostazioni.js    foglio "Altro"
 2. Lezioni ricorrenti ed eccezioni sulla singola occorrenza **(prossima)**
 3. Attività periodiche fisse e flessibili
 4. Obiettivo adattivo con test, barra, recupero parziale, modalità sessione
-5. Modalità focus con registrazione automatica
+5. ~~Modalità focus con registrazione automatica e Non disturbare~~
 6. Esami, conto alla rovescia, simulatore della media
 7. Inserimento rapido testuale e pianificazione automatica
 8. Rituali, abitudini, revisione settimanale

@@ -5,6 +5,7 @@
 import { apriFoglio, chiudiFoglio, collegaScelta, messaggio } from "./foglio.js";
 import { esporta, importa } from "./archivio.js";
 import { oggi, descrivi } from "./date.js";
+import { lanciaComando, NOME_COMANDO } from "./schermo-focus.js";
 
 // Applica alla pagina l'accento e il carattere dei titoli scelti
 export function applicaAspetto(impostazioni) {
@@ -44,6 +45,38 @@ export function apriImpostazioni(stato, azioni) {
 
     <div class="separatore"></div>
 
+    <div class="campo">
+      <span class="etichetta">Focus</span>
+      <div class="segmenti" id="scelta-modalita">
+        <button type="button" data-valore="libera"${stile(imp.focusModalita !== "cicli")}>Libero</button>
+        <button type="button" data-valore="cicli"${stile(imp.focusModalita === "cicli")}>A cicli</button>
+      </div>
+    </div>
+    <div class="due-colonne" id="campi-cicli">
+      <label class="campo">
+        <span class="etichetta">Studio (min)</span>
+        <input type="number" id="ciclo-studio" inputmode="numeric" min="10" max="120" value="${imp.cicloStudio}">
+      </label>
+      <label class="campo">
+        <span class="etichetta">Pausa (min)</span>
+        <input type="number" id="ciclo-pausa" inputmode="numeric" min="1" max="60" value="${imp.cicloPausa}">
+      </label>
+    </div>
+    <div class="campo">
+      <span class="etichetta">Non disturbare durante il focus</span>
+      <div class="segmenti" id="scelta-nd">
+        <button type="button" data-valore="no"${stile(!imp.nonDisturbare)}>No</button>
+        <button type="button" data-valore="si"${stile(imp.nonDisturbare)}>Sì</button>
+      </div>
+      <p class="nota">Richiede il comando rapido "${NOME_COMANDO}" (vedi TUTORIAL.md). "Prova" attiva Non disturbare per un minuto.</p>
+      <div class="azioni" style="margin-top:12px">
+        <button type="button" class="pulsante" id="prova-nd">Prova</button>
+        <button type="button" class="pulsante" id="spegni-nd">Disattiva</button>
+      </div>
+    </div>
+
+    <div class="separatore"></div>
+
     <span class="etichetta">Backup</span>
     <p class="nota" id="nota-backup">${testoBackup}</p>
     <p class="nota">I dati vivono solo su questo telefono. Esporta un backup ogni tanto e conservalo in File o iCloud.</p>
@@ -64,6 +97,29 @@ export function apriImpostazioni(stato, azioni) {
   collegaScelta(cerca("#scelta-accento"), (valore) => azioni.cambiaImpostazioni({ accento: valore }));
   collegaScelta(cerca("#scelta-titoli"), (valore) => azioni.cambiaImpostazioni({ titoli: valore }));
   cerca("#chiudi").addEventListener("click", () => chiudiFoglio());
+
+  // Focus: modalità, durata dei cicli, Non disturbare
+  const mostraCicli = (modalita) => { cerca("#campi-cicli").hidden = modalita !== "cicli"; };
+  mostraCicli(imp.focusModalita);
+  collegaScelta(cerca("#scelta-modalita"), (valore) => {
+    azioni.cambiaImpostazioni({ focusModalita: valore });
+    mostraCicli(valore);
+  });
+  // Legge un numero da un campo e lo tiene tra un minimo e un massimo
+  const collegaNumero = (selettore, chiave, minimo, massimo) => {
+    cerca(selettore).addEventListener("change", (evento) => {
+      let valore = Math.round(Number(evento.target.value));
+      if (!Number.isFinite(valore)) valore = minimo;
+      valore = Math.max(minimo, Math.min(valore, massimo));
+      evento.target.value = valore;
+      azioni.cambiaImpostazioni({ [chiave]: valore });
+    });
+  };
+  collegaNumero("#ciclo-studio", "cicloStudio", 10, 120);
+  collegaNumero("#ciclo-pausa", "cicloPausa", 1, 60);
+  collegaScelta(cerca("#scelta-nd"), (valore) => azioni.cambiaImpostazioni({ nonDisturbare: valore === "si" }));
+  cerca("#prova-nd").addEventListener("click", () => lanciaComando("1"));
+  cerca("#spegni-nd").addEventListener("click", () => lanciaComando("off"));
 
   cerca("#esporta").addEventListener("click", async () => {
     const esito = await esporta(stato);

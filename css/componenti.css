@@ -276,6 +276,8 @@
 .pulsante.pericolo { color: var(--saltato); border-color: transparent; }
 .pulsante.pericolo.conferma { border-color: var(--saltato); }
 .pulsante.largo { width: 100%; }
+.pulsante.accento { border-color: var(--accento); color: var(--accento); margin-bottom: 20px; }
+.pulsante.accento:active { background: var(--accento-tenue); }
 
 /* ---------- Card ---------- */
 
@@ -354,6 +356,7 @@
 .campo input[type="text"],
 .campo input[type="time"],
 .campo input[type="date"],
+.campo input[type="number"],
 .campo select {
   width: 100%;
   height: var(--tocco);
@@ -433,3 +436,56 @@
   white-space: nowrap;
 }
 .messaggio.visibile { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Modalità focus: schermo intero, nero puro ---------- */
+
+.focus {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(36px + env(safe-area-inset-top)) 28px calc(28px + env(safe-area-inset-bottom));
+  animation: compare var(--morbida) var(--curva);
+}
+@keyframes compare { from { opacity: 0; } to { opacity: 1; } }
+
+.focus-alto .titolo { font-size: 30px; margin-top: 8px; }
+.focus-alto p { margin-top: 4px; font-size: 14px; }
+
+.focus-centro { text-align: center; }
+.focus-tempo {
+  font-size: clamp(64px, 22vw, 104px);
+  font-weight: 400;
+  margin-bottom: 26px;
+  transition: opacity var(--morbida);
+}
+:root[data-titoli="sans"] .focus-tempo { font-weight: 200; }
+.focus.in-pausa .focus-tempo { opacity: 0.45; }
+.focus-centro .barra-obiettivo { max-width: 260px; margin: 0 auto 18px; }
+.focus-centro .barra-obiettivo > i { transition: width 1s linear; }
+.focus-centro p { font-size: 14px; min-height: 22px; }
+
+.focus-basso { max-width: 420px; width: 100%; margin: 0 auto; }
+.focus-azioni { display: grid; gap: 10px; }
+.focus-avviso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--testo-2);
+  border-top: 1px solid var(--linea);
+  padding: 12px 0;
+  margin-bottom: 8px;
+}
+.focus-avviso[hidden] { display: none; }
+.focus-avviso button {
+  min-height: 40px;
+  padding: 0 4px;
+  color: var(--accento);
+  font-size: 13px;
+  white-space: nowrap;
+}

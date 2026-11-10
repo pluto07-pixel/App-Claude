@@ -12,7 +12,7 @@
 // Se cambio l'elenco dei file, aumento il numero in VERSIONE.
 // ============================================================
 
-const VERSIONE = "agenda-1";
+const VERSIONE = "agenda-2";
 
 const FILE = [
   "./",
@@ -23,11 +23,13 @@ const FILE = [
   "js/app.js",
   "js/archivio.js",
   "js/date.js",
+  "js/focus.js",
   "js/foglio.js",
   "js/giornata.js",
   "js/impostazioni.js",
   "js/modello.js",
   "js/modulo-blocco.js",
+  "js/schermo-focus.js",
   "js/trascina.js",
   "fonts/Inter.ttf",
   "fonts/CormorantGaramond.ttf",

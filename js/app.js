@@ -15,6 +15,7 @@ import { attivaTrascinamento } from "./trascina.js";
 import { apriModuloBlocco } from "./modulo-blocco.js";
 import { apriImpostazioni, applicaAspetto } from "./impostazioni.js";
 import { messaggio } from "./foglio.js";
+import { preparaFocus, avviaFocus } from "./schermo-focus.js";
 
 // ---------- Stato in memoria ----------
 
@@ -92,6 +93,9 @@ const azioniBlocco = {
     stato.blocchi = stato.blocchi.filter((b) => b.id !== id);
     aggiorna();
   },
+  avviaFocus(blocco) {
+    avviaFocus(blocco);
+  },
 };
 
 function nuovoBlocco(inizio) {
@@ -162,6 +166,14 @@ attivaTrascinamento(elTimeline, (id, nuovoInizio) => {
 applicaAspetto(stato.impostazioni);
 disegna();
 scorriAllOra();
+
+// La modalità focus lavora sullo stesso stato: le passo come leggerlo, salvarlo e ridisegnare.
+// stato() è una funzione e non il valore perché "stato" può essere sostituito (import di un backup).
+preparaFocus({
+  stato: () => stato,
+  salva: () => { if (!salva(stato)) messaggio("Salvataggio non riuscito"); },
+  ridisegna: disegna,
+});
 chiediPersistenza();
 
 // La linea dell'ora attuale avanza: ridisegno una volta al minuto

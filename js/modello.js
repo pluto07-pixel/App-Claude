@@ -4,7 +4,8 @@
 // lo schermo: sono funzioni "pure" (stesso ingresso, stessa uscita),
 // quindi facili da provare.
 //
-//   stato   = { versione, materie[], blocchi[], impostazioni{} }
+//   stato    = { versione, materie[], blocchi[], sessioni[], focus, impostazioni{} }
+//   sessione = { id, data, bloccoId, materiaId, inizio, fine, studio, interruzioni, fuori }
 //   materia = { id, nome, sigla, cfu, colore }
 //   blocco  = { id, data, inizio, fine, tipo, materiaId, titolo, stato }
 // ============================================================
@@ -38,12 +39,18 @@ export function statoIniziale() {
       { id: "emc", nome: "Elementi di Matematica Computazionale", sigla: "Mat. computazionale", cfu: 6, colore: "#9c8798" },
     ],
     blocchi: [],
+    sessioni: [],            // studio effettivo registrato dalla modalità focus
+    focus: null,             // il focus in corso, se ce n'è uno (vedi js/focus.js)
     impostazioni: {
       inizioGiornata: 450,   // 7:30
       fineGiornata: 1410,    // 23:30
       accento: "ottone",     // oppure "acciaio"
       titoli: "serif",       // oppure "sans"
       ultimoBackup: null,    // giorno dell'ultimo backup esportato
+      focusModalita: "libera", // oppure "cicli"
+      cicloStudio: 50,       // minuti di studio per ciclo
+      cicloPausa: 10,        // minuti di pausa per ciclo
+      nonDisturbare: false,  // lancia il comando rapido all'avvio e alla fine del focus
     },
   };
 }
@@ -163,6 +170,8 @@ export function aggiorna(stato) {
     ...base,
     ...stato,
     versione: VERSIONE,
+    sessioni: Array.isArray(stato.sessioni) ? stato.sessioni : [],
+    focus: stato.focus || null,
     impostazioni: { ...base.impostazioni, ...(stato.impostazioni || {}) },
   };
 }

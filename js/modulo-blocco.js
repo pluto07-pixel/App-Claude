@@ -9,7 +9,7 @@ import { pulisci } from "./giornata.js";
 
 // stato:   lo stato dell'app (serve per l'elenco delle materie)
 // blocco:  il blocco da modificare, oppure una bozza { data, inizio, fine } per uno nuovo
-// azioni:  { salva(blocco), elimina(id) } — cosa fare quando l'utente conferma
+// azioni:  { salva(blocco), elimina(id), avviaFocus(blocco) } — cosa fare quando l'utente conferma
 export function apriModuloBlocco(stato, blocco, azioni) {
   const nuovo = !blocco.id;
   const tipo = blocco.tipo || "studio";
@@ -17,6 +17,12 @@ export function apriModuloBlocco(stato, blocco, azioni) {
 
   const foglio = apriFoglio(`
     <h2 class="titolo">${nuovo ? "Nuovo blocco" : "Modifica blocco"}</h2>
+
+    ${!nuovo && tipo === "studio" && blocco.materiaId && !stato.focus ? `
+    <button type="button" class="pulsante largo accento" id="avvia-focus">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+      Avvia focus
+    </button>` : ""}
 
     <div class="campo">
       <span class="etichetta">Tipo</span>
@@ -100,6 +106,15 @@ export function apriModuloBlocco(stato, blocco, azioni) {
   });
 
   cerca("#annulla").addEventListener("click", () => chiudiFoglio());
+
+  // Avvia il focus sul blocco così com'è salvato (le modifiche non salvate vengono ignorate)
+  const avvia = cerca("#avvia-focus");
+  if (avvia) {
+    avvia.addEventListener("click", () => {
+      chiudiFoglio(true);
+      azioni.avviaFocus(blocco);
+    });
+  }
 
   cerca("#salva").addEventListener("click", () => {
     const tipoScelto = leggiTipo();
