@@ -7,12 +7,15 @@
 //  2. a ogni richiesta rispondo subito con la copia in cache: l'app si apre
 //     all'istante e funziona offline;
 //  3. intanto, se c'è rete, scarico la versione nuova e aggiorno la cache.
-//     Conseguenza: una modifica pubblicata si vede alla SECONDA apertura.
+//
+// Quando pubblico una versione nuova aumento VERSIONE: il browser si accorge
+// che questo file è cambiato, installa il nuovo service worker e la pagina
+// (vedi in fondo a js/app.js) si ricarica da sola con i file nuovi.
 //
 // Se cambio l'elenco dei file, aumento il numero in VERSIONE.
 // ============================================================
 
-const VERSIONE = "agenda-4";
+const VERSIONE = "agenda-5";
 
 const FILE = [
   "./",
@@ -43,7 +46,11 @@ const FILE = [
 // Installazione: scarico tutto
 self.addEventListener("install", (evento) => {
   evento.waitUntil(
-    caches.open(VERSIONE).then((cache) => cache.addAll(FILE)).then(() => self.skipWaiting())
+    caches.open(VERSIONE)
+      // cache: "reload" = scarica davvero dal sito. Senza, il browser potrebbe restituire
+      // una copia vecchia di qualche minuto dalla SUA memoria e l'aggiornamento non si vedrebbe.
+      .then((cache) => cache.addAll(FILE.map((file) => new Request(file, { cache: "reload" }))))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -64,7 +71,7 @@ self.addEventListener("fetch", (evento) => {
   evento.respondWith(
     caches.open(VERSIONE).then(async (cache) => {
       const copia = await cache.match(richiesta, { ignoreSearch: true });
-      const dallaRete = fetch(richiesta)
+      const dallaRete = fetch(richiesta, { cache: "no-cache" })   // chiede sempre al sito se c'è di nuovo
         .then((risposta) => {
           if (risposta.ok) cache.put(richiesta, risposta.clone());
           return risposta;

@@ -25,7 +25,7 @@ Cosa funziona:
 - Dati in `localStorage`, chiave `agenda.dati`, un unico oggetto JSON con campo `versione`.
 - Orari come minuti dalla mezzanotte, giorni come stringhe `AAAA-MM-GG`.
 - Disegno: a ogni modifica si ricostruisce l'HTML della timeline dallo stato.
-- Service worker "prima la copia, poi l'aggiornamento": una modifica pubblicata si vede alla seconda apertura. Quando cambia l'elenco dei file va aumentata `VERSIONE` in `sw.js`.
+- Service worker "prima la copia, poi l'aggiornamento". A ogni pubblicazione vanno aumentate insieme `VERSIONE` in `sw.js` e `VERSIONE_APP` in `js/modello.js`: il nuovo service worker subentra e la pagina si ricarica da sola. I file si scaricano saltando la cache HTTP del browser (GitHub Pages la fa durare 10 minuti).
 - Pubblicazione e backup anticipati alla fase 1 (richiesta di Davide).
 - Si costruiscono tutte e 12 le funzionalità (richiesta di Davide), una fase per sessione.
 - Telefono di riferimento: iPhone 14.

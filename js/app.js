@@ -244,7 +244,23 @@ document.addEventListener("visibilitychange", () => {
 
 // Service worker: il programma che rende l'app disponibile offline (vedi sw.js)
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js").catch((errore) => {
-    console.warn("Service worker non registrato.", errore);
+  // C'era già un service worker al comando quando ho aperto l'app?
+  // Se sì e ne subentra uno nuovo, è arrivato un aggiornamento: ricarico per usarlo subito.
+  // (Alla primissima apertura invece non ricarico: non c'è nulla di vecchio da sostituire.)
+  const giaInstallata = Boolean(navigator.serviceWorker.controller);
+  let ricaricata = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!giaInstallata || ricaricata) return;
+    ricaricata = true;
+    window.location.reload();
   });
+
+  navigator.serviceWorker.register("./sw.js")
+    .then((registrazione) => {
+      // Controllo se c'è una versione nuova anche ogni volta che torno all'app
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) registrazione.update().catch(() => {});
+      });
+    })
+    .catch((errore) => console.warn("Service worker non registrato.", errore));
 }

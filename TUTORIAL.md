@@ -78,5 +78,5 @@ Tutto parte da **Altro → Settimana tipo: lezioni e attività**.
 
 ## 7. Aggiornamenti e backup
 
-- Quando l'app viene aggiornata, la versione nuova compare alla **seconda** apertura: chiudila dal selettore delle app e riaprila due volte.
+- Gli aggiornamenti arrivano da soli: all'apertura l'app controlla se c'è una versione nuova e si ricarica. Per forzare il controllo: **Altro → Cerca aggiornamenti**. Il numero di versione è scritto lì accanto.
 - Ogni tanto fai **Altro → Esporta** e salva il file in File o iCloud. Se elimini l'icona dalla Home, i dati vengono cancellati.

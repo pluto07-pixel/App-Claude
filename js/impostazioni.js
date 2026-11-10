@@ -5,6 +5,7 @@
 import { apriFoglio, chiudiFoglio, collegaScelta, messaggio } from "./foglio.js";
 import { esporta, importa } from "./archivio.js";
 import { oggi, descrivi } from "./date.js";
+import { VERSIONE_APP } from "./modello.js";
 import { lanciaComando, NOME_COMANDO } from "./schermo-focus.js";
 
 // Applica alla pagina l'accento e il carattere dei titoli scelti
@@ -89,6 +90,12 @@ export function apriImpostazioni(stato, azioni) {
     <input type="file" id="file-backup" accept=".json,application/json" hidden>
     <p class="errore" id="errore-backup" role="alert" style="margin-top:12px"></p>
 
+    <div class="separatore"></div>
+    <span class="etichetta">Versione ${VERSIONE_APP}</span>
+    <div class="azioni" style="margin-top:12px">
+      <button type="button" class="pulsante" id="aggiorna-app">Cerca aggiornamenti</button>
+    </div>
+
     <div class="azioni">
       <button type="button" class="pulsante largo discreto" id="chiudi">Chiudi</button>
     </div>
@@ -99,6 +106,19 @@ export function apriImpostazioni(stato, azioni) {
   collegaScelta(cerca("#scelta-accento"), (valore) => azioni.cambiaImpostazioni({ accento: valore }));
   collegaScelta(cerca("#scelta-titoli"), (valore) => azioni.cambiaImpostazioni({ titoli: valore }));
   cerca("#chiudi").addEventListener("click", () => chiudiFoglio());
+  // Forza il controllo di una versione nuova: se c'è, la pagina si ricarica da sola (vedi app.js)
+  cerca("#aggiorna-app").addEventListener("click", async () => {
+    const pulsante = cerca("#aggiorna-app");
+    pulsante.textContent = "Controllo…";
+    try {
+      const registrazione = await navigator.serviceWorker.getRegistration();
+      await registrazione.update();
+      // Se dopo qualche secondo sono ancora qui, non c'era nulla di nuovo
+      setTimeout(() => { pulsante.textContent = "Già aggiornata"; }, 4000);
+    } catch {
+      pulsante.textContent = "Nessuna connessione";
+    }
+  });
   cerca("#settimana-tipo").addEventListener("click", () => azioni.apriSettimanaTipo());
 
   // Focus: modalità, durata dei cicli, Non disturbare

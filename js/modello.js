@@ -12,6 +12,10 @@
 
 export const VERSIONE = 1;
 
+// Versione dell'app mostrata in "Altro": la aumento a ogni pubblicazione,
+// insieme a VERSIONE in sw.js, così si vede a colpo d'occhio quale versione è in uso.
+export const VERSIONE_APP = 5;
+
 export const TIPI = [
   { id: "studio", nome: "Studio" },
   { id: "commissione", nome: "Commissione" },
