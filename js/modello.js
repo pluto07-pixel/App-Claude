@@ -26,7 +26,7 @@ export const STATI = [
 ];
 
 // Colori dei blocchi che non hanno una materia
-const COLORI_TIPO = { commissione: "#7d786f", libero: "#63706f", altro: "#5a5956" };
+const COLORI_TIPO = { commissione: "#7d786f", libero: "#63706f", altro: "#5a5956", attivita: "#6f7480" };
 
 // Lo stato con cui parte l'app la prima volta
 export function statoIniziale() {
@@ -39,6 +39,9 @@ export function statoIniziale() {
       { id: "emc", nome: "Elementi di Matematica Computazionale", sigla: "Mat. computazionale", cfu: 6, colore: "#9c8798" },
     ],
     blocchi: [],
+    ricorrenze: [],          // lezioni e attività fisse che si ripetono (vedi js/ricorrenze.js)
+    eccezioni: [],           // singole occorrenze annullate o spostate
+    flessibili: [],          // attività con frequenza settimanale ma senza giorno fisso
     sessioni: [],            // studio effettivo registrato dalla modalità focus
     focus: null,             // il focus in corso, se ce n'è uno (vedi js/focus.js)
     impostazioni: {
@@ -72,6 +75,7 @@ export function creaBlocco(campi) {
     materiaId: campi.materiaId || null,
     titolo: (campi.titolo || "").trim(),
     stato: campi.stato || "pianificato",
+    flessibileId: campi.flessibileId || null,   // se il blocco è una "volta" di un'attività flessibile
   };
 }
 
@@ -95,13 +99,15 @@ export function trovaMateria(stato, materiaId) {
 export function titoloDi(stato, blocco) {
   if (blocco.titolo) return blocco.titolo;
   const materia = trovaMateria(stato, blocco.materiaId);
-  if (blocco.tipo === "studio" && materia) return materia.sigla;
-  return TIPI.find((t) => t.id === blocco.tipo).nome;
+  if ((blocco.tipo === "studio" || blocco.tipo === "lezione") && materia) return materia.sigla;
+  const tipo = TIPI.find((t) => t.id === blocco.tipo);
+  return tipo ? tipo.nome : "Attività";
 }
 
 export function coloreDi(stato, blocco) {
   const materia = trovaMateria(stato, blocco.materiaId);
-  if (blocco.tipo === "studio" && materia) return materia.colore;
+  if ((blocco.tipo === "studio" || blocco.tipo === "lezione") && materia) return materia.colore;
+  if (blocco.flessibileId) return COLORI_TIPO.attivita;
   return COLORI_TIPO[blocco.tipo] || COLORI_TIPO.altro;
 }
 
@@ -170,6 +176,9 @@ export function aggiorna(stato) {
     ...base,
     ...stato,
     versione: VERSIONE,
+    ricorrenze: Array.isArray(stato.ricorrenze) ? stato.ricorrenze : [],
+    eccezioni: Array.isArray(stato.eccezioni) ? stato.eccezioni : [],
+    flessibili: Array.isArray(stato.flessibili) ? stato.flessibili : [],
     sessioni: Array.isArray(stato.sessioni) ? stato.sessioni : [],
     focus: stato.focus || null,
     impostazioni: { ...base.impostazioni, ...(stato.impostazioni || {}) },

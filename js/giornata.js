@@ -8,7 +8,8 @@
 // ============================================================
 
 import { inOrario, minutiAdesso, oggi } from "./date.js";
-import { blocchiDelGiorno, disponi, titoloDi, coloreDi } from "./modello.js";
+import { disponi, titoloDi, coloreDi } from "./modello.js";
+import { vociDelGiorno } from "./ricorrenze.js";
 
 // Scala verticale: quanti pixel vale un minuto
 export const PX_MINUTO = 1.1;
@@ -35,7 +36,11 @@ export function intervallo(stato, blocchi) {
 
 // Costruisce la timeline dentro "contenitore"
 export function disegnaTimeline(contenitore, stato, giorno) {
-  const blocchi = blocchiDelGiorno(stato, giorno);
+  // "voci" = blocchi + occorrenze di lezioni e attività fisse.
+  // Le lezioni annullate non occupano spazio: le disegno a parte, come etichette.
+  const tutte = vociDelGiorno(stato, giorno);
+  const blocchi = tutte.filter((v) => !v.annullata);
+  const annullate = tutte.filter((v) => v.annullata);
   const { da, a } = intervallo(stato, blocchi);
   const altezza = (a - da) * PX_MINUTO;
 
@@ -55,6 +60,11 @@ export function disegnaTimeline(contenitore, stato, giorno) {
     const classi = ["blocco", blocco.stato];
     if (durata < 40) classi.push("corto");
     if (colonne > 1) { classi.push("sovrapposto"); sovrapposti++; }
+    if (blocco.ricorrenzaId) classi.push("fisso");
+    // Sotto il titolo: l'orario, più l'aula per le lezioni
+    let dettagli = `${inOrario(blocco.inizio)} – ${inOrario(blocco.fine)}`;
+    if (blocco.aula) dettagli += ` · ${pulisci(blocco.aula)}`;
+    if (blocco.spostata) dettagli += " · spostata";
     const stile = [
       `top:${(blocco.inizio - da) * PX_MINUTO}px`,
       `height:${Math.max(durata * PX_MINUTO - 2, 18)}px`,
@@ -66,10 +76,16 @@ export function disegnaTimeline(contenitore, stato, giorno) {
       <button class="${classi.join(" ")}" style="${stile}"
               data-id="${blocco.id}" data-inizio="${blocco.inizio}" data-fine="${blocco.fine}">
         <span class="blocco-titolo">${pulisci(titoloDi(stato, blocco))}</span>
-        <span class="blocco-orario numeri">${inOrario(blocco.inizio)} – ${inOrario(blocco.fine)}</span>
+        <span class="blocco-orario numeri">${dettagli}</span>
       </button>`;
   }
-  if (blocchi.length === 0) {
+  for (const voce of annullate) {
+    html += `
+      <button class="blocco annullata" style="top:${(voce.inizio - da) * PX_MINUTO}px" data-id="${voce.id}">
+        <span class="blocco-titolo">${pulisci(titoloDi(stato, voce))} · annullata</span>
+      </button>`;
+  }
+  if (tutte.length === 0) {
     html += `<p class="vuoto" style="top:${Math.min(altezza / 2, 260)}px">Giornata vuota. Tocca un orario per aggiungere un blocco.</p>`;
   }
   html += `</div>`;

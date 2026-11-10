@@ -165,7 +165,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.blocco-orario { font-size: 11px; color: var(--testo-2); }
+.blocco-orario { font-size: 11px; color: var(--testo-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .blocco.corto { flex-direction: row; align-items: center; gap: 8px; padding-top: 0; padding-bottom: 0; }
 .blocco.corto .blocco-titolo { font-size: 12.5px; }
 
@@ -489,3 +489,74 @@
   font-size: 13px;
   white-space: nowrap;
 }
+
+/* ---------- Lezioni e attività fisse sulla timeline ---------- */
+
+/* Un po' più "piatte" dei blocchi che creo io: sono lo sfondo fisso della giornata */
+.blocco.fisso {
+  background: var(--superficie);
+  border-color: var(--linea-forte);
+  border-left-color: var(--colore, var(--testo-3));
+}
+
+/* Lezione annullata: una piccola etichetta a destra, che non occupa spazio */
+.blocco.annullata {
+  right: 0;
+  height: 22px;
+  padding: 0 8px;
+  flex-direction: row;
+  align-items: center;
+  background: transparent;
+  border: 1px dashed var(--linea-forte);
+  z-index: 3;
+}
+.blocco.annullata .blocco-titolo {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--testo-3);
+  text-decoration: line-through;
+}
+
+/* ---------- Attività flessibili: contatori della settimana ---------- */
+
+.flessibili {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px 0;
+}
+.flessibili:empty { display: none; }
+.flessibili button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--linea);
+  border-radius: 18px;
+  font-size: 12.5px;
+  color: var(--testo-2);
+  transition: background var(--rapida), color var(--rapida);
+}
+.flessibili button:active { background: var(--rialzo); color: var(--testo); }
+.flessibili button .numeri { color: var(--testo); margin-left: 4px; }
+.flessibili button.completa .numeri { color: var(--fatto); }
+
+/* ---------- Elenco della settimana tipo ---------- */
+
+.gruppo { display: block; margin: 18px 0 8px; }
+.riga {
+  width: 100%;
+  min-height: var(--tocco);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  text-align: left;
+  border: 1px solid var(--linea);
+  border-left: 2px solid var(--colore);
+  border-radius: var(--raggio-piccolo);
+  transition: background var(--rapida);
+}
+.riga:active { background: var(--rialzo); }
+.riga-orario { font-size: 12px; color: var(--testo-2); white-space: nowrap; min-width: 92px; }
+.riga-testo { font-size: 14px; display: flex; flex-direction: column; }
+.riga-testo small { font-size: 11.5px; color: var(--testo-3); }

@@ -23,7 +23,7 @@ export function attivaTrascinamento(contenitore, alRilascio) {
   let ignoraProssimoTocco = false;
 
   contenitore.addEventListener("pointerdown", (evento) => {
-    const elemento = evento.target.closest(".blocco");
+    const elemento = evento.target.closest(".blocco:not(.annullata)");
     if (!elemento || evento.button > 0) return;
     const inizio = Number(elemento.dataset.inizio);
     presa = {

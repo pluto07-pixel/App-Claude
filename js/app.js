@@ -8,7 +8,9 @@
 // ============================================================
 
 import { oggi, aggiungiGiorni, lunediDi, descrivi, arrotonda, minutiAdesso, GIORNI, daGiorno } from "./date.js";
-import { blocchiDelGiorno } from "./modello.js";
+import { vociDelGiorno, statoFlessibili, impostaEccezione } from "./ricorrenze.js";
+import { apriSettimanaTipo, apriOccorrenza } from "./settimana-tipo.js";
+import { pulisci } from "./giornata.js";
 import { carica, salva, chiediPersistenza } from "./archivio.js";
 import { disegnaTimeline, minutoAlTocco, PX_MINUTO } from "./giornata.js";
 import { attivaTrascinamento } from "./trascina.js";
@@ -29,6 +31,7 @@ const elTestataData = document.querySelector("#testata-data");
 const elSettimana = document.querySelector("#settimana");
 const elTimeline = document.querySelector("#timeline");
 const elAvviso = document.querySelector("#avviso");
+const elFlessibili = document.querySelector("#flessibili");
 
 // ---------- Disegno ----------
 
@@ -45,7 +48,7 @@ function disegna() {
     const classi = [];
     if (g === giorno) classi.push("scelto");
     if (g === oggi()) classi.push("oggi");
-    if (blocchiDelGiorno(stato, g).length > 0) classi.push("pieno");
+    if (vociDelGiorno(stato, g).some((v) => !v.annullata)) classi.push("pieno");
     const nome = GIORNI[daGiorno(g).getDay()];
     html += `
       <button class="${classi.join(" ")}" data-giorno="${g}" aria-label="${nome} ${descrivi(g).numero}">
@@ -54,6 +57,12 @@ function disegna() {
       </button>`;
   }
   elSettimana.innerHTML = html;
+
+  // Attività flessibili: quante ne ho piazzate questa settimana. Toccandone una la piazzo oggi.
+  elFlessibili.innerHTML = statoFlessibili(stato, giorno).map(({ flessibile, piazzate }) => `
+    <button type="button" data-flessibile="${flessibile.id}" class="${piazzate >= flessibile.volte ? "completa" : ""}">
+      ${pulisci(flessibile.titolo)} <span class="numeri">${piazzate}/${flessibile.volte}</span>
+    </button>`).join("");
 
   const { sovrapposti } = disegnaTimeline(elTimeline, stato, giorno);
   elAvviso.textContent = sovrapposti > 0 ? "Alcuni blocchi si sovrappongono." : "";
@@ -107,7 +116,27 @@ function nuovoBlocco(inizio) {
   apriModuloBlocco(stato, { data: giorno, inizio, fine: inizio + 60 }, azioniBlocco);
 }
 
+// Usate dai fogli della settimana tipo: salvano, ridisegnano e (se serve) cambiano giorno
+const azioniSettimana = {
+  aggiorna(nuovoGiorno) {
+    if (nuovoGiorno) giorno = nuovoGiorno;
+    aggiorna();
+  },
+};
+
 // ---------- Tocchi ----------
+
+// Tocco su un'attività flessibile: propongo un blocco di quella durata nel giorno che sto guardando
+elFlessibili.addEventListener("click", (evento) => {
+  const pulsante = evento.target.closest("button[data-flessibile]");
+  if (!pulsante) return;
+  const flessibile = stato.flessibili.find((f) => f.id === pulsante.dataset.flessibile);
+  const inizio = Math.min(giorno === oggi() ? Math.ceil((minutiAdesso() + 1) / 30) * 30 : 1080, 1439 - flessibile.durata);
+  apriModuloBlocco(stato, {
+    data: giorno, inizio, fine: inizio + flessibile.durata,
+    tipo: "altro", titolo: flessibile.titolo, flessibileId: flessibile.id,
+  }, azioniBlocco);
+});
 
 document.querySelector("#giorno-prima").addEventListener("click", () => vaiA(aggiungiGiorni(giorno, -1)));
 document.querySelector("#giorno-dopo").addEventListener("click", () => vaiA(aggiungiGiorni(giorno, 1)));
@@ -136,6 +165,9 @@ document.querySelector("#altro").addEventListener("click", () => {
       applicaAspetto(stato.impostazioni);
       aggiorna();
     },
+    apriSettimanaTipo() {
+      apriSettimanaTipo(stato, azioniSettimana);
+    },
   });
 });
 
@@ -143,6 +175,12 @@ document.querySelector("#altro").addEventListener("click", () => {
 elTimeline.addEventListener("click", (evento) => {
   const elemento = evento.target.closest(".blocco");
   if (elemento) {
+    // Le occorrenze di lezioni e attività fisse hanno un id che comincia con "r:"
+    if (elemento.dataset.id.startsWith("r:")) {
+      const voce = vociDelGiorno(stato, giorno).find((v) => v.id === elemento.dataset.id);
+      if (voce) apriOccorrenza(stato, voce, azioniSettimana);
+      return;
+    }
     const blocco = stato.blocchi.find((b) => b.id === elemento.dataset.id);
     if (blocco) apriModuloBlocco(stato, blocco, azioniBlocco);
     return;
@@ -153,6 +191,17 @@ elTimeline.addEventListener("click", (evento) => {
 
 // Pressione lunga + trascinamento: sposta il blocco mantenendone la durata
 attivaTrascinamento(elTimeline, (id, nuovoInizio) => {
+  // Trascinare una lezione sposta solo quella volta: diventa un'eccezione
+  if (id.startsWith("r:")) {
+    const voce = vociDelGiorno(stato, giorno).find((v) => v.id === id);
+    if (voce && nuovoInizio !== voce.inizio) {
+      const inizio = arrotonda(nuovoInizio);
+      impostaEccezione(stato, voce.ricorrenzaId, voce.dataOriginale,
+        { nuovaData: giorno, inizio, fine: inizio + (voce.fine - voce.inizio) });
+    }
+    aggiorna();
+    return;
+  }
   const blocco = stato.blocchi.find((b) => b.id === id);
   if (!blocco) return;
   const durata = blocco.fine - blocco.inizio;

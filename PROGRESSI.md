@@ -4,7 +4,7 @@ Agenda personale con obiettivo di studio adattivo. Questo file serve a riprender
 
 ## Stato attuale
 
-**Fasi 1 e 5 completate** (10 novembre 2026). L'app mostra la giornata, salva i dati, funziona offline, si può installare e ha la modalità focus.
+**Fasi 1, 2, 3 e 5 completate** (11 novembre 2026). L'app mostra la giornata, salva i dati, funziona offline, si può installare, ha lezioni e attività ricorrenti e la modalità focus.
 
 Cosa funziona:
 - vista giornata: timeline verticale, linea dell'ora attuale, striscia della settimana, frecce giorno prima/dopo, pulsante Oggi;
@@ -14,6 +14,8 @@ Cosa funziona:
 - backup: esporta (pannello Condividi su iPhone) e importa JSON, con conferma;
 - PWA: manifest, icone, service worker, font inclusi;
 - aspetto: accento (ottone/acciaio) e titoli (serif/sans sottile) si cambiano da "Altro";
+- lezioni e attività fisse: una regola per ciascuna (giorno della settimana, orario, periodo), gestite da "Altro → Settimana tipo"; la singola occorrenza si annulla, si sposta (anche trascinandola) e si ripristina senza toccare la regola;
+- attività flessibili: frequenza settimanale, contatore "x/n" nella schermata principale, ogni volta piazzata è un blocco con `flessibileId`;
 - focus: timer a schermo intero avviato da un blocco di studio, libero o a cicli, studio effettivo registrato in `stato.sessioni`, uscite dall'app registrate (non contate, salvo scelta), schermo tenuto acceso;
 - Non disturbare: all'avvio e alla chiusura anticipata l'app lancia il comando rapido "Agenda Focus" (istruzioni in `TUTORIAL.md`).
 
@@ -28,6 +30,8 @@ Cosa funziona:
 - Si costruiscono tutte e 12 le funzionalità (richiesta di Davide), una fase per sessione.
 - Telefono di riferimento: iPhone 14.
 - Font: Inter e Cormorant Garamond, ridotti ai caratteri latini (`fonts/`).
+- Le lezioni non vengono copiate nei giorni: si salva la regola (`stato.ricorrenze`) e le occorrenze si calcolano al momento del disegno. Le modifiche a una sola volta sono in `stato.eccezioni`, legate a ricorrenza e data originale.
+- Una lezione annullata resta visibile come etichetta, per poterla ripristinare; non occupa spazio nella disposizione.
 - Focus anticipato rispetto all'ordine delle fasi (richiesta di Davide). Il tempo si calcola dagli istanti salvati, non contando i secondi, perché iPhone sospende i timer in secondo piano.
 - Non disturbare passa da Comandi Rapidi (`shortcuts://run-shortcut`): il comando riceve i minuti rimanenti per attivare, nessun input per disattivare. Alla fine prevista non serve nulla, iPhone lo spegne da solo.
 - Il blocco schermo è indistinguibile dall'uscita dall'app: per questo al rientro c'è "Conta come studio".
@@ -54,21 +58,24 @@ js/date.js            giorni e orari
 js/archivio.js        localStorage e backup
 js/giornata.js        disegno della timeline
 js/trascina.js        pressione lunga e trascinamento
+js/ricorrenze.js      lezioni, attività, eccezioni (funzioni pure)
+js/settimana-tipo.js  fogli per gestire la settimana tipo e le singole occorrenze
 js/focus.js           calcoli del focus (funzioni pure)
 js/schermo-focus.js   timer a schermo intero, uscite, Non disturbare
 js/foglio.js          pannello dal basso e messaggi
 js/modulo-blocco.js   modulo nuovo/modifica blocco
 js/impostazioni.js    foglio "Altro"
 test/focus.test.mjs   prove del focus: node test/focus.test.mjs
+test/ricorrenze.test.mjs  prove delle ricorrenze: node test/ricorrenze.test.mjs
 TUTORIAL.md           installazione su iPhone e comando rapido
 ```
 
 ## Fasi
 
 1. ~~Stile, struttura, dati, vista giornata, trascinamento, backup, PWA, pubblicazione~~
-2. Lezioni ricorrenti ed eccezioni sulla singola occorrenza **(prossima)**
-3. Attività periodiche fisse e flessibili
-4. Obiettivo adattivo con test, barra, recupero parziale, modalità sessione
+2. ~~Lezioni ricorrenti ed eccezioni sulla singola occorrenza~~
+3. ~~Attività periodiche fisse e flessibili~~
+4. Obiettivo adattivo con test, barra, recupero parziale, modalità sessione **(prossima)**
 5. ~~Modalità focus con registrazione automatica e Non disturbare~~
 6. Esami, conto alla rovescia, simulatore della media
 7. Inserimento rapido testuale e pianificazione automatica

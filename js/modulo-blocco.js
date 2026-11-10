@@ -126,6 +126,7 @@ export function apriModuloBlocco(stato, blocco, azioni) {
       materiaId: tipoScelto === "studio" ? leggiMateria() : null,
       titolo: cerca("#campo-titolo").value,
       stato: leggiStato(),
+      flessibileId: blocco.flessibileId,
     };
     // Per un blocco esistente tengo lo stesso id, per uno nuovo ne creo uno
     const risultato = nuovo ? creaBlocco(campi) : { ...creaBlocco(campi), id: blocco.id };

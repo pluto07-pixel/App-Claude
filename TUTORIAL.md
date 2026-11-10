@@ -60,7 +60,23 @@ L'agenda passa al comando i minuti rimanenti quando deve attivare Non disturbare
 
 In **Altro → Focus** scegli tra focus libero e a cicli (per esempio 50 minuti di studio e 10 di pausa).
 
-## 6. Aggiornamenti e backup
+## 6. Lezioni fisse e impegni periodici
+
+Tutto parte da **Altro → Settimana tipo: lezioni e attività**.
+
+**Lezioni.** Tocca **+ Lezione**, scegli materia, aula, giorno della settimana, orario e periodo ("Vale dal" e "Fino al": inizio e fine delle lezioni del semestre). Una materia con lezione in due giorni diversi va inserita due volte, una per giorno. Il periodo viene riproposto da solo alla lezione successiva. Da quel momento la lezione compare in ogni giorno corrispondente.
+
+**Attività fisse** (giorno e orario precisi, es. padel il giovedì 18:00–19:30). Tocca **+ Attività fissa**: nome, giorno, orario. "Fino al" è facoltativo: senza data vale sempre.
+
+**Attività flessibili** (frequenza settimanale senza giorno fisso, es. palestra 3 volte). Tocca **+ Attività flessibile**: nome, volte a settimana, durata. Nella schermata principale compare un contatore, per esempio "Palestra 1/3". Toccalo nel giorno in cui vuoi andarci: si apre un blocco già compilato, scegli l'orario e conferma. I blocchi segnati "saltato" non vengono contati.
+
+**Cambiare una sola volta.** Tocca la lezione o l'attività sulla timeline:
+- **Annulla solo questa volta**: resta una piccola etichetta "annullata" da cui puoi ripristinarla;
+- **Sposta**: cambi giorno e orario di quella sola occorrenza (oppure tienila premuta e trascinala);
+- **Ripristina l'orario normale**: toglie la modifica;
+- **Modifica tutta la serie**: cambia la regola per tutte le settimane.
+
+## 7. Aggiornamenti e backup
 
 - Quando l'app viene aggiornata, la versione nuova compare alla **seconda** apertura: chiudila dal selettore delle app e riaprila due volte.
 - Ogni tanto fai **Altro → Esporta** e salva il file in File o iCloud. Se elimini l'icona dalla Home, i dati vengono cancellati.

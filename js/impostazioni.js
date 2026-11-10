@@ -14,7 +14,7 @@ export function applicaAspetto(impostazioni) {
 }
 
 // stato:  lo stato dell'app
-// azioni: { cambiaImpostazioni(modifiche), sostituisciStato(nuovoStato) }
+// azioni: { cambiaImpostazioni(modifiche), sostituisciStato(nuovoStato), apriSettimanaTipo() }
 export function apriImpostazioni(stato, azioni) {
   const imp = stato.impostazioni;
   const stile = (scelto) => (scelto ? ' class="scelto"' : "");
@@ -26,6 +26,8 @@ export function apriImpostazioni(stato, azioni) {
 
   const foglio = apriFoglio(`
     <h2 class="titolo">Altro</h2>
+
+    <button type="button" class="pulsante largo accento" id="settimana-tipo">Settimana tipo: lezioni e attività</button>
 
     <div class="campo">
       <span class="etichetta">Accento</span>
@@ -97,6 +99,7 @@ export function apriImpostazioni(stato, azioni) {
   collegaScelta(cerca("#scelta-accento"), (valore) => azioni.cambiaImpostazioni({ accento: valore }));
   collegaScelta(cerca("#scelta-titoli"), (valore) => azioni.cambiaImpostazioni({ titoli: valore }));
   cerca("#chiudi").addEventListener("click", () => chiudiFoglio());
+  cerca("#settimana-tipo").addEventListener("click", () => azioni.apriSettimanaTipo());
 
   // Focus: modalità, durata dei cicli, Non disturbare
   const mostraCicli = (modalita) => { cerca("#campi-cicli").hidden = modalita !== "cicli"; };
