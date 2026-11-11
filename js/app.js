@@ -7,10 +7,13 @@
 //   tocco -> modifico lo stato -> salvo -> ridisegno
 // ============================================================
 
-import { oggi, aggiungiGiorni, lunediDi, descrivi, arrotonda, minutiAdesso, GIORNI, daGiorno } from "./date.js";
+import { oggi, aggiungiGiorni, lunediDi, descrivi, arrotonda, minutiAdesso, GIORNI, daGiorno, inDurata } from "./date.js";
 import { vociDelGiorno, statoFlessibili, impostaEccezione } from "./ricorrenze.js";
 import { apriSettimanaTipo, apriOccorrenza } from "./settimana-tipo.js";
 import { pulisci } from "./giornata.js";
+import { obiettiviDelGiorno } from "./tempo.js";
+import { apriObiettivi, apriObiettivoDelGiorno } from "./obiettivi.js";
+import { disegnaStatistiche, preparaStatistiche, statisticheAOggi } from "./statistiche.js";
 import { carica, salva, chiediPersistenza } from "./archivio.js";
 import { disegnaTimeline, minutoAlTocco, PX_MINUTO } from "./giornata.js";
 import { attivaTrascinamento } from "./trascina.js";
@@ -23,6 +26,7 @@ import { preparaFocus, avviaFocus } from "./schermo-focus.js";
 
 let stato = carica();          // tutti i dati dell'agenda
 let giorno = oggi();           // il giorno che sto guardando
+let vista = "giornata";        // quale schermata è visibile: "giornata" oppure "statistiche"
 
 // ---------- Elementi della pagina ----------
 
@@ -32,10 +36,23 @@ const elSettimana = document.querySelector("#settimana");
 const elTimeline = document.querySelector("#timeline");
 const elAvviso = document.querySelector("#avviso");
 const elFlessibili = document.querySelector("#flessibili");
+const elObiettivi = document.querySelector("#obiettivi");
+const elVistaGiornata = document.querySelector("#vista-giornata");
+const elVistaStatistiche = document.querySelector("#vista-statistiche");
 
 // ---------- Disegno ----------
 
 function disegna() {
+  // Mostro una schermata e nascondo l'altra
+  elVistaGiornata.hidden = vista !== "giornata";
+  elVistaStatistiche.hidden = vista !== "statistiche";
+  document.querySelector("#vai-oggi").classList.toggle("attiva", vista === "giornata");
+  document.querySelector("#vai-statistiche").classList.toggle("attiva", vista === "statistiche");
+  if (vista === "statistiche") {
+    disegnaStatistiche(elVistaStatistiche, stato);
+    return;
+  }
+
   const d = descrivi(giorno);
   elTestataGiorno.textContent = giorno === oggi() ? `Oggi · ${d.nome}` : d.nome;
   elTestataData.textContent = `${d.numero} ${d.mese}`;
@@ -57,6 +74,20 @@ function disegna() {
       </button>`;
   }
   elSettimana.innerHTML = html;
+
+  // Obiettivi del giorno: titolo, fatto / da fare, barra di avanzamento. Toccandone uno lo apro.
+  elObiettivi.innerHTML = obiettiviDelGiorno(stato, giorno, { giorno: oggi(), minuti: minutiAdesso() }).map((o) => {
+    const percento = o.traguardo > 0 ? Math.min(100, (o.fatto / o.traguardo) * 100) : 0;
+    const raggiunto = o.traguardo > 0 && o.fatto >= o.traguardo;
+    return `
+    <button type="button" class="obiettivo-riga ${raggiunto ? "raggiunto" : ""}" data-obiettivo="${o.obiettivo.id}">
+      <span class="obiettivo-testi">
+        <span>${pulisci(o.obiettivo.titolo)}</span>
+        <span class="numeri">${o.fatto > 0 ? inDurata(o.fatto) : "0"} / ${o.traguardo > 0 ? inDurata(o.traguardo) : "–"}${o.modificato ? " · modificato" : ""}</span>
+      </span>
+      <span class="barra-obiettivo"><i style="width:${percento}%"></i></span>
+    </button>`;
+  }).join("");
 
   // Attività flessibili: quante ne ho piazzate questa settimana. Toccandone una la piazzo oggi.
   elFlessibili.innerHTML = statoFlessibili(stato, giorno).map(({ flessibile, piazzate }) => `
@@ -81,6 +112,7 @@ function vaiA(nuovoGiorno) {
 
 // Porta in vista l'ora attuale (o le 8:00 se guardo un altro giorno)
 function scorriAllOra() {
+  if (vista !== "giornata") return;
   const area = elTimeline.querySelector(".area-blocchi");
   const da = Number(area.dataset.da);
   const minuto = giorno === oggi() ? minutiAdesso() : 480;
@@ -126,6 +158,25 @@ const azioniSettimana = {
 
 // ---------- Tocchi ----------
 
+// Tocco su un obiettivo del giorno: aggiungo tempo o cambio il valore per quel giorno
+elObiettivi.addEventListener("click", (evento) => {
+  const riga = evento.target.closest("[data-obiettivo]");
+  if (!riga) return;
+  const voce = obiettiviDelGiorno(stato, giorno, { giorno: oggi(), minuti: minutiAdesso() })
+    .find((o) => o.obiettivo.id === riga.dataset.obiettivo);
+  if (voce) apriObiettivoDelGiorno(stato, voce, giorno, azioniSettimana);
+});
+
+document.querySelector("#vai-obiettivi").addEventListener("click", () => apriObiettivi(stato, azioniSettimana));
+
+document.querySelector("#vai-statistiche").addEventListener("click", () => {
+  vista = "statistiche";
+  statisticheAOggi();
+  disegna();
+  window.scrollTo(0, 0);
+});
+preparaStatistiche(elVistaStatistiche, () => disegna());
+
 // Tocco su un'attività flessibile: propongo un blocco di quella durata nel giorno che sto guardando
 elFlessibili.addEventListener("click", (evento) => {
   const pulsante = evento.target.closest("button[data-flessibile]");
@@ -147,11 +198,16 @@ elSettimana.addEventListener("click", (evento) => {
 });
 
 document.querySelector("#vai-oggi").addEventListener("click", () => {
+  vista = "giornata";
   vaiA(oggi());
   scorriAllOra();
 });
 
-document.querySelector("#aggiungi").addEventListener("click", () => nuovoBlocco());
+document.querySelector("#aggiungi").addEventListener("click", () => {
+  // Dalle statistiche torno prima alla giornata: il blocco nuovo va visto lì
+  if (vista !== "giornata") { vista = "giornata"; disegna(); }
+  nuovoBlocco();
+});
 
 document.querySelector("#altro").addEventListener("click", () => {
   apriImpostazioni(stato, {

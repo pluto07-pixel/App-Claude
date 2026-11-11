@@ -217,28 +217,28 @@
   margin: 0 auto;
   height: 64px;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr 1fr auto 1fr 1fr;
   align-items: center;
-  padding: 0 20px;
-}
-.barra-voce {
-  height: var(--tocco);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--testo-2);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  justify-self: start;
   padding: 0 8px;
+}
+/* Ogni voce: icona sopra, nome sotto */
+.barra-voce {
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--testo-3);
+  font-size: 10px;
+  letter-spacing: 0.04em;
   transition: color var(--rapida);
 }
-.barra-voce:last-child { justify-self: end; }
-.barra-voce:active { color: var(--testo); }
+.barra-voce:active, .barra-voce.attiva { color: var(--testo); }
 
 .barra-aggiungi {
   width: 52px; height: 52px;
+  margin: 0 10px;
   border-radius: 50%;
   border: 1px solid var(--accento);
   color: var(--accento);
@@ -560,3 +560,87 @@
 .riga-orario { font-size: 12px; color: var(--testo-2); white-space: nowrap; min-width: 92px; }
 .riga-testo { font-size: 14px; display: flex; flex-direction: column; }
 .riga-testo small { font-size: 11.5px; color: var(--testo-3); }
+
+/* ---------- Obiettivi del giorno (sopra la timeline) ---------- */
+
+.obiettivi { padding: 6px 20px 0; display: grid; gap: 4px; }
+.obiettivi:empty { display: none; }
+.obiettivo-riga {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 0 10px;
+  display: grid;
+  gap: 8px;
+  text-align: left;
+}
+.obiettivo-testi { display: flex; justify-content: space-between; align-items: baseline; font-size: 13.5px; }
+.obiettivo-testi .numeri { font-size: 12.5px; color: var(--testo-2); }
+.obiettivo-riga.raggiunto .numeri { color: var(--fatto); }
+.obiettivo-riga.raggiunto .barra-obiettivo > i { background: var(--fatto); }
+
+/* Modulo obiettivo: un campo per ogni giorno della settimana */
+.griglia-giorni { display: grid; gap: 6px; }
+.griglia-giorni label {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  align-items: center;
+  font-size: 14px;
+  color: var(--testo-2);
+}
+.griglia-giorni input, .campo input[type="text"] { font-variant-numeric: tabular-nums; }
+.griglia-giorni input {
+  height: 44px;
+  padding: 0 12px;
+  background: var(--fondo);
+  border: 1px solid var(--linea);
+  border-radius: var(--raggio);
+  font-size: 16px;
+  text-align: right;
+}
+.griglia-giorni input:focus { outline: none; border-color: var(--accento); }
+
+/* ---------- Statistiche ---------- */
+
+.statistiche-corpo { padding: 8px 20px 24px; display: grid; gap: 34px; }
+.statistiche-corpo section > .etichetta { display: block; margin-bottom: 4px; }
+
+/* Barre orizzontali: nome e valore sopra, barra sottile sotto */
+.barra-riga { padding-top: 12px; }
+.barra-testi { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13.5px; margin-bottom: 7px; }
+.barra-testi .numeri { font-size: 12.5px; color: var(--testo-2); white-space: nowrap; }
+.barra-pista { height: 4px; background: var(--linea); border-radius: 2px; }
+.barra-pista > i {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: #86847f;
+  border-radius: 2px;
+  transition: width 500ms var(--curva);
+}
+.barra-pista > i.accento { background: var(--accento); }
+
+/* Colonne giorno per giorno */
+.colonne {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 150px;
+  margin-top: 26px;
+  border-top: 1px solid var(--linea);    /* la riga in alto corrisponde al valore massimo */
+}
+.colonne-massimo { position: absolute; right: 0; top: -18px; font-size: 11px; color: var(--testo-3); }
+.colonna { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.colonna-area { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; border-bottom: 1px solid var(--linea-forte); }
+.colonna-area > i {
+  display: block;
+  width: 100%;
+  max-width: 22px;
+  background: #86847f;
+  border-radius: 3px 3px 0 0;
+  transition: height 500ms var(--curva), background var(--rapida);
+}
+.colonna.scelta .colonna-area > i { background: var(--accento); }
+.colonna-sigla { height: 14px; font-size: 11px; color: var(--testo-3); }
+.colonna.oggi .colonna-sigla { color: var(--accento); }
+.colonne.fitte { gap: 1px; }

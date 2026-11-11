@@ -76,7 +76,31 @@ Tutto parte da **Altro → Settimana tipo: lezioni e attività**.
 - **Ripristina l'orario normale**: toglie la modifica;
 - **Modifica tutta la serie**: cambia la regola per tutte le settimane.
 
-## 7. Aggiornamenti e backup
+## 7. Obiettivi giornalieri
+
+Apri **Obiettivi** nella barra in basso → **+ Obiettivo**.
+
+1. **Cosa misura.** "Studio" conta da solo tutto lo studio a casa (blocchi di studio segnati fatti e tempo di focus; le lezioni non contano). "Altra attività" conta i blocchi e le attività con lo stesso nome dell'obiettivo, più il tempo che aggiungi a mano.
+2. **Nome.** Per esempio Studio, Lettura.
+3. **Valore per ogni giorno della settimana.** Scrivi una durata in ogni campo: `2h`, `1h30`, `45m`. Campo vuoto = nessun obiettivo quel giorno. "Uguale ogni giorno" riempie tutti i campi in una volta.
+
+Gli obiettivi del giorno compaiono sopra la timeline con una barra di avanzamento. Toccandone uno puoi:
+- **aggiungere tempo fatto** (+15 min, +30 min, +1h, oppure "Completa"), utile per la lettura serale;
+- **cambiare l'obiettivo solo per quel giorno**, senza toccare i valori settimanali, e ripristinarlo.
+
+## 8. Statistiche
+
+Apri **Statistiche** nella barra in basso. Scegli **Settimana** o **Mese** e scorri i periodi con le frecce. Trovi: tempo totale registrato, dove va il tempo (studio a casa, lezioni, palestra, padel, lettura...), studio giorno per giorno (tocca una colonna per il valore), studio a casa e lezioni per materia, obiettivi raggiunti, focus.
+
+Cosa viene contato:
+- **studio a casa**: il tempo di focus, oppure la durata dei blocchi di studio segnati **fatto**;
+- **altri blocchi** (palestra, commissioni, tempo libero): solo se segnati **fatto**;
+- **lezioni e attività fisse**: da sole, una volta passate. Se non ci sei andato, annullale per quel giorno;
+- **tempo aggiunto a mano** su un obiettivo.
+
+Un blocco lasciato su "pianificato" non conta: per avere statistiche vere, segna i blocchi come fatti o saltati.
+
+## 9. Aggiornamenti e backup
 
 - Gli aggiornamenti arrivano da soli: all'apertura l'app controlla se c'è una versione nuova e si ricarica. Per forzare il controllo: **Altro → Cerca aggiornamenti**. Il numero di versione è scritto lì accanto.
 - Ogni tanto fai **Altro → Esporta** e salva il file in File o iCloud. Se elimini l'icona dalla Home, i dati vengono cancellati.

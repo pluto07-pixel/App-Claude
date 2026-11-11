@@ -14,7 +14,7 @@ export const VERSIONE = 1;
 
 // Versione dell'app mostrata in "Altro": la aumento a ogni pubblicazione,
 // insieme a VERSIONE in sw.js, così si vede a colpo d'occhio quale versione è in uso.
-export const VERSIONE_APP = 5;
+export const VERSIONE_APP = 6;
 
 export const TIPI = [
   { id: "studio", nome: "Studio" },
@@ -46,6 +46,9 @@ export function statoIniziale() {
     ricorrenze: [],          // lezioni e attività fisse che si ripetono (vedi js/ricorrenze.js)
     eccezioni: [],           // singole occorrenze annullate o spostate
     flessibili: [],          // attività con frequenza settimanale ma senza giorno fisso
+    obiettivi: [],           // obiettivi giornalieri con un valore per giorno della settimana (vedi js/tempo.js)
+    obiettiviGiorno: [],     // valori diversi per un solo giorno
+    registrazioni: [],       // tempo aggiunto a mano su un obiettivo
     sessioni: [],            // studio effettivo registrato dalla modalità focus
     focus: null,             // il focus in corso, se ce n'è uno (vedi js/focus.js)
     impostazioni: {
@@ -183,6 +186,9 @@ export function aggiorna(stato) {
     ricorrenze: Array.isArray(stato.ricorrenze) ? stato.ricorrenze : [],
     eccezioni: Array.isArray(stato.eccezioni) ? stato.eccezioni : [],
     flessibili: Array.isArray(stato.flessibili) ? stato.flessibili : [],
+    obiettivi: Array.isArray(stato.obiettivi) ? stato.obiettivi : [],
+    obiettiviGiorno: Array.isArray(stato.obiettiviGiorno) ? stato.obiettiviGiorno : [],
+    registrazioni: Array.isArray(stato.registrazioni) ? stato.registrazioni : [],
     sessioni: Array.isArray(stato.sessioni) ? stato.sessioni : [],
     focus: stato.focus || null,
     impostazioni: { ...base.impostazioni, ...(stato.impostazioni || {}) },

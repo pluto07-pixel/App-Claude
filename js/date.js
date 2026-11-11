@@ -90,3 +90,21 @@ export function inDurata(minuti) {
   if (ore === 0) return `${resto} min`;
   return resto === 0 ? `${ore}h` : `${ore}h${dueCifre(resto)}`;
 }
+
+// Legge una durata scritta a mano e la trasforma in minuti.
+// Accetta "2h", "1h30", "1:30", "1,5h", "45m", "45 min", "90".
+// Un numero da solo vale ore se è piccolo (fino a 10) e minuti se è grande: "2" -> 2 ore, "90" -> 90 minuti.
+// Testo vuoto -> 0. Testo non riconosciuto -> null.
+export function daDurata(testo) {
+  const t = String(testo || "").trim().toLowerCase().replace(",", ".");
+  if (t === "") return 0;
+  let trovato = /^(\d+(?:\.\d+)?)\s*h\s*(\d{1,2})?\s*(?:m|min)?$/.exec(t);
+  if (trovato) return Math.round(Number(trovato[1]) * 60) + Number(trovato[2] || 0);
+  trovato = /^(\d{1,2}):(\d{2})$/.exec(t);
+  if (trovato) return Number(trovato[1]) * 60 + Number(trovato[2]);
+  trovato = /^(\d+)\s*(?:m|min)$/.exec(t);
+  if (trovato) return Number(trovato[1]);
+  trovato = /^(\d+)$/.exec(t);
+  if (trovato) return Number(trovato[1]) <= 10 ? Number(trovato[1]) * 60 : Number(trovato[1]);
+  return null;
+}

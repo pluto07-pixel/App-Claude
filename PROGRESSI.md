@@ -4,7 +4,7 @@ Agenda personale con obiettivo di studio adattivo. Questo file serve a riprender
 
 ## Stato attuale
 
-**Fasi 1, 2, 3 e 5 completate** (11 novembre 2026). L'app mostra la giornata, salva i dati, funziona offline, si può installare, ha lezioni e attività ricorrenti e la modalità focus.
+**Fasi 1, 2, 3, 4 (in forma diversa), 5 e 9 completate** (11 novembre 2026). L'app mostra la giornata, salva i dati, funziona offline, si può installare, ha lezioni e attività ricorrenti, obiettivi giornalieri, statistiche e modalità focus.
 
 Cosa funziona:
 - vista giornata: timeline verticale, linea dell'ora attuale, striscia della settimana, frecce giorno prima/dopo, pulsante Oggi;
@@ -16,6 +16,8 @@ Cosa funziona:
 - aspetto: accento (ottone/acciaio) e titoli (serif/sans sottile) si cambiano da "Altro";
 - lezioni e attività fisse: una regola per ciascuna (giorno della settimana, orario, periodo), gestite da "Altro → Settimana tipo"; la singola occorrenza si annulla, si sposta (anche trascinandola) e si ripristina senza toccare la regola;
 - attività flessibili: frequenza settimanale, contatore "x/n" nella schermata principale, ogni volta piazzata è un blocco con `flessibileId`;
+- obiettivi giornalieri: categoria generale (studio automatico oppure altra attività), un valore per ogni giorno della settimana, modificabile per un solo giorno; tempo aggiungibile a mano; barre sopra la timeline;
+- statistiche: schermata a parte, per settimana o mese: dove va il tempo, studio giorno per giorno, studio e lezioni per materia, obiettivi, focus;
 - focus: timer a schermo intero avviato da un blocco di studio, libero o a cicli, studio effettivo registrato in `stato.sessioni`, uscite dall'app registrate (non contate, salvo scelta), schermo tenuto acceso;
 - Non disturbare: all'avvio e alla chiusura anticipata l'app lancia il comando rapido "Agenda Focus" (istruzioni in `TUTORIAL.md`).
 
@@ -32,6 +34,10 @@ Cosa funziona:
 - Font: Inter e Cormorant Garamond, ridotti ai caratteri latini (`fonts/`).
 - Le lezioni non vengono copiate nei giorni: si salva la regola (`stato.ricorrenze`) e le occorrenze si calcolano al momento del disegno. Le modifiche a una sola volta sono in `stato.eccezioni`, legate a ricorrenza e data originale.
 - Una lezione annullata resta visibile come etichetta, per poterla ripristinare; non occupa spazio nella disposizione.
+- Obiettivo di studio: Davide ha chiesto valori fissi per giorno della settimana, modificabili giorno per giorno, al posto della formula adattiva del prompt iniziale (ore libere × percentuale, recupero parziale, modalità sessione). La formula non è stata costruita.
+- Regole di conteggio del tempo (`js/tempo.js`): lo studio conta dal focus o dai blocchi "fatto"; gli altri blocchi solo se "fatto"; lezioni e attività fisse da sole quando sono passate e non annullate.
+- Barra in basso a cinque voci: Oggi, Statistiche, +, Obiettivi, Altro.
+- Nei grafici ogni barra ha nome e valore scritti: i colori delle materie sono volutamente desaturati e da soli non bastano a distinguerle.
 - Focus anticipato rispetto all'ordine delle fasi (richiesta di Davide). Il tempo si calcola dagli istanti salvati, non contando i secondi, perché iPhone sospende i timer in secondo piano.
 - Non disturbare passa da Comandi Rapidi (`shortcuts://run-shortcut`): il comando riceve i minuti rimanenti per attivare, nessun input per disattivare. Alla fine prevista non serve nulla, iPhone lo spegne da solo.
 - Il blocco schermo è indistinguibile dall'uscita dall'app: per questo al rientro c'è "Conta come studio".
@@ -60,6 +66,9 @@ js/giornata.js        disegno della timeline
 js/trascina.js        pressione lunga e trascinamento
 js/ricorrenze.js      lezioni, attività, eccezioni (funzioni pure)
 js/settimana-tipo.js  fogli per gestire la settimana tipo e le singole occorrenze
+js/tempo.js           conteggio del tempo, obiettivi, riepiloghi (funzioni pure)
+js/obiettivi.js       fogli degli obiettivi giornalieri
+js/statistiche.js     schermata delle statistiche
 js/focus.js           calcoli del focus (funzioni pure)
 js/schermo-focus.js   timer a schermo intero, uscite, Non disturbare
 js/foglio.js          pannello dal basso e messaggi
@@ -67,6 +76,7 @@ js/modulo-blocco.js   modulo nuovo/modifica blocco
 js/impostazioni.js    foglio "Altro"
 test/focus.test.mjs   prove del focus: node test/focus.test.mjs
 test/ricorrenze.test.mjs  prove delle ricorrenze: node test/ricorrenze.test.mjs
+test/tempo.test.mjs   prove di tempo, obiettivi e statistiche: node test/tempo.test.mjs
 TUTORIAL.md           installazione su iPhone e comando rapido
 ```
 
@@ -75,12 +85,12 @@ TUTORIAL.md           installazione su iPhone e comando rapido
 1. ~~Stile, struttura, dati, vista giornata, trascinamento, backup, PWA, pubblicazione~~
 2. ~~Lezioni ricorrenti ed eccezioni sulla singola occorrenza~~
 3. ~~Attività periodiche fisse e flessibili~~
-4. Obiettivo adattivo con test, barra, recupero parziale, modalità sessione **(prossima)**
+4. ~~Obiettivi giornalieri~~ (valori per giorno della settimana al posto della formula adattiva)
 5. ~~Modalità focus con registrazione automatica e Non disturbare~~
-6. Esami, conto alla rovescia, simulatore della media
+6. Esami, conto alla rovescia, simulatore della media **(prossima)**
 7. Inserimento rapido testuale e pianificazione automatica
 8. Rituali, abitudini, revisione settimanale
-9. Statistiche
+9. ~~Statistiche~~ (manca il confronto energia/studio, che dipende dai rituali della fase 8)
 10. Extra: .ics e notifiche
 
 ## Come provarla sul computer
